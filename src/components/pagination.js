@@ -19,19 +19,14 @@ const Pagination = ({ listLength }) => {
   const perPage = Number(params.get("perPage")) || 20;
   const page = Number(params.get("page")) || 1;
 
-  const totalPage = listLength / perPage; // 10
-  const pagesPerGroup = 5;
-
-  //현재 페이지 => 1 ~ 5 => 1그룹
-  //            6 ~ 10 => 2그룹
-
   const [currentPage, setCurrentPage] = useState(page);
 
   //그룹
   //현재 페이지 그룹 : currentGroup
   //한 그룹당 보여줄 페이지 개수 : pagesPerGroup = 5
   //총 페이지 그룹 개수 : 총 페이지 개수 / 한 그룹당 보여줄 페이지 개수 = 2
-  // const pagesPerGroup = 5;
+  const pagesPerGroup = 5;
+  const totalPage = listLength / perPage; // 10
   const [currentGroup, setCurrentGroup] = useState(1);
 
   const lastGroup = Math.ceil(totalPage / pagesPerGroup);
@@ -91,7 +86,7 @@ const Pagination = ({ listLength }) => {
           const pageNumber = (currentGroup - 1) * pagesPerGroup + idx + 1;
 
           // data가 없으면 얼리 리턴으로 버튼 생성 X
-          if (200 <= perPage * idx) return;
+          if (listLength <= perPage * idx) return;
 
           return (
             <NumberButton
