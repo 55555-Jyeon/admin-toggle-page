@@ -79,27 +79,26 @@ export const UserList = (count) => {
     return `${year}.${month}.${day}.${hour}:${minute}:${second}`;
   };
 
+  // 랜덤 핸드폰 번호 (가운데 * 처리) 생성
   const generatePhoneNumber = () => {
     return `010-${Math.floor(Math.random() * 9000) + 1000}-${
       Math.floor(Math.random() * 9000) + 1000
     }`;
   };
-
-  const maskingPhoneNumber = () => {
+  const concealMiddleNumber = () => {
     const split = generatePhoneNumber().split("-");
-
     split[1] = "*".repeat(split[1].length);
     return split.join("-");
   };
 
+  // 값을 고정시키지 않기 위해 매개변수(count)를 받아오도록 작성
   return Array(count)
     .fill()
-    .map((array, index) => ({
-      // page: Math.floor(index / 20) + 1,
+    .map((user, index) => ({
       id: index + 1,
       name: generateName(),
       birthday: generateBirthday(),
-      number: maskingPhoneNumber(),
-      createdAt: generateLastLoginDate(),
+      number: concealMiddleNumber(),
+      lastLoginDate: generateLastLoginDate(),
     }));
 };
