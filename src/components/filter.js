@@ -1,71 +1,97 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { Button } from "../styles/common.style";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { USER_TABLE_FILTER } from "../const/user_table_filter";
+import { useSearchParams } from "react-router-dom";
 
-const Filter = ({ sortedList, setSortedList, userList, setUserPerPage }) => {
-  // 뒤로가기
-  const navigate = useNavigate();
-  const [param, setParam] = useSearchParams();
-  const userTableFilterList = USER_TABLE_FILTER;
+const Filter = ({ sortedList, setSortedList, userList }) => {
+  // 뒤로가기: useSearchParams & useEffect
+  const [searchParam, setSearchParam] = useSearchParams();
 
-  const sortBy = param.get("sortBy") || "name";
-  const orderBy = param.get("orderBy") || "ascend";
-  const currentPage = param.get("page") || 1;
-  const perPage = param.get("perPage") || 20;
+  const sortBy = searchParam.get("sort-by") || "memberId";
+  const orderBy = searchParam.get("order-by") || "ascend";
+  const currentPage = searchParam.get("page") || 1;
+  const perPage = searchParam.get("per-page") || 20;
 
-  //선택된 옵션으로 쿼리스트링 변경
+  // 선택된 옵션으로 쿼리스트링 변경하는 함수
   const onChangeValue = (e) => {
-    param.set(e.target.name, e.target.value);
-    setParam(param);
+    searchParam.set(e.target.name, e.target.value);
+    setSearchParam(searchParam);
   };
 
-  //현재 페이지에 보이는 콘텐츠 리스트
+  // 현재 페이지에 보이는 콘텐츠 리스트
+  // 한 페이지에 보일 유저의 처음과 마지막 index를 구해 list를 나누는 함수
+  // 즉, (userList/ perPage)를 실행하는 함수
   const sliceDataByPerPage = (list) => {
-    const currentFirstIndex = (currentPage - 1) * perPage;
-    const currentLastIndex = currentPage * perPage;
+    // 매개변수로 받는 list는 필터를 거치지 않은 pure userList
+    const currentFirstIndex = (currentPage - 1) * perPage; // 0
+    const currentLastIndex = currentPage * perPage; // 20, 50
     const slicedData = list.slice(currentFirstIndex, currentLastIndex);
     return slicedData;
   };
 
-  //렌더링 될 떄 sortBy 옵션을 파악해서 해당 필터링 함수 실행
+  // 렌더링 될 떄 sortBy 옵션을 파악해서 해당 필터링 함수 실행: 경우의 수가 2가지 이상이므로 switch문으로 작성
   useEffect(() => {
-    if (sortBy === "name") {
-      SortByName();
-    } else if (sortBy === "recentLogin") {
-      sortByLastLoginDate();
-    } else {
-      sortByBirthDate();
+    switch (sortBy) {
+      case "memberId":
+        SortById();
+        break;
+      case "name":
+        SortByName();
+        break;
+      case "recentLogin":
+        sortByLastLoginDate();
+        break;
+      case "birth":
+        sortByBirthDate();
+        break;
     }
-  }, [param]);
+  }, [searchParam]);
+
+  // 회원번호 순(default)
+  const SortById = () => {
+    let IdList;
+    if (orderBy === "ascend") {
+      IdList = userList.sort((a, b) => (a.id < b.id ? -1 : 1));
+      console.log("아이디 기준 오름차순 정렬");
+    } else {
+      IdList = userList.sort((b, a) => (a.id > b.id ? -1 : 1));
+      console.log("아이디 기준 내림차순 정렬");
+    }
+    setSortedList(IdList);
+    const slicedData = sliceDataByPerPage(IdList);
+    setSortedList(slicedData);
+  };
 
   // 이름 순
   const SortByName = () => {
     let nameList;
     if (orderBy === "ascend") {
       nameList = userList.sort((a, b) => a.name.localeCompare(b.name));
+      console.log("이름 기준 오름차순 정렬");
     } else {
       nameList = userList.sort((a, b) => b.name.localeCompare(a.name));
+      console.log("이름 기준 내림차순 정렬");
     }
     setSortedList(nameList);
     const slicedData = sliceDataByPerPage(nameList);
     setSortedList(slicedData);
   };
 
-  // 마지막 로그인 순
+  // 로그인 시점 순
   const sortByLastLoginDate = () => {
     let lastLoginDateList;
     if (orderBy === "ascend") {
       lastLoginDateList = userList.sort((a, b) => {
         const aDate = new Date(a.lastLoginDate);
         const bDate = new Date(b.lastLoginDate);
+        console.log("로그인 시점 기준 오름차순 정렬");
         return aDate - bDate;
       });
     } else {
       lastLoginDateList = userList.sort((a, b) => {
         const aDate = new Date(a.lastLoginDate);
         const bDate = new Date(b.lastLoginDate);
+        console.log("로그인 시점 기준 내림차순 정렬");
         return bDate - aDate;
       });
     }
@@ -78,14 +104,16 @@ const Filter = ({ sortedList, setSortedList, userList, setUserPerPage }) => {
     let birthDateList;
     if (orderBy === "ascend") {
       birthDateList = userList.sort((a, b) => {
-        const aDate = new Date(a.birthDate);
-        const bDate = new Date(b.birthDate);
+        const aDate = new Date(a.birthday);
+        const bDate = new Date(b.birthday);
+        console.log("생일 기준 오름차순");
         return aDate - bDate;
       });
     } else {
       birthDateList = userList.sort((a, b) => {
-        const aDate = new Date(a.birthDate);
-        const bDate = new Date(b.birthDate);
+        const aDate = new Date(a.birthday);
+        const bDate = new Date(b.birthday);
+        console.log("생일 기준 내림차순");
         return bDate - aDate;
       });
     }
@@ -95,20 +123,19 @@ const Filter = ({ sortedList, setSortedList, userList, setUserPerPage }) => {
 
   return (
     <ButtonBox>
-      <select onChange={onChangeValue} name="perPage">
+      <select onChange={onChangeValue} name="per-page">
         <option value={20}>20명씩 보기</option>
         <option value={50}>50명씩 보기</option>
       </select>
       {/* sort standard */}
-      <select onChange={onChangeValue} name="sortBy">
-        <option value={"number"}>회원번호</option>
+      <select onChange={onChangeValue} name="sort-by">
+        <option value={"memberId"}>회원번호</option>
         <option value={"name"}>이름</option>
         <option value={"birth"}>생일</option>
-        <option value={"login"}>최근 로그인</option>
+        <option value={"recentLogin"}>최근 로그인</option>
       </select>
       {/* sort method */}
-      <select onChange={onChangeValue} name="orderBy">
-        <option>나열 방향</option>
+      <select onChange={onChangeValue} name="order-by">
         <option value={"ascend"}>오름차순</option>
         <option value={"descend"}>내림차순</option>
       </select>

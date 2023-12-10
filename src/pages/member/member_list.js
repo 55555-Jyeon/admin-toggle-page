@@ -1,7 +1,7 @@
 import { UserList } from "../../__mock__/user_list";
 import { useState } from "react";
 import styled from "styled-components";
-import { AlignCenter, FlexCenter } from "../../styles/common.style";
+import { AlignCenter } from "../../styles/common.style";
 import Pagination from "../../components/pagination";
 import UserTable from "../../components/user_table";
 import Filter from "../../components/filter";

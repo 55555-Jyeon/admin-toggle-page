@@ -20,7 +20,7 @@ const UserTable = ({ userList }) => {
             <Td>{user.name}</Td>
             <Td>{user.birthday}</Td>
             <Td>{user.number}</Td>
-            <Td>{user.createdAt}</Td>
+            <Td>{user.lastLoginDate}</Td>
           </tr>
         ))}
       </tbody>
