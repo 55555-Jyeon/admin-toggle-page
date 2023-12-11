@@ -3,10 +3,15 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import member from "../images/user.png";
 import product from "../images/package.png";
+import MenuPage from "../pages";
 
 const ToggleButton = () => {
   const navigate = useNavigate();
   // 뒤로가기 클릭 시 toggle UI도 같이 변경되게 하기 위한 주소 상수로 설정
+  const currentURL = window.location.href;
+  const baseURL = "http://localhost:3000";
+  //현재 url에서 baseURL과 파라미터를 제외한 주소만 가져오기
+  const relativeURL = currentURL.replace(baseURL, "").split("?")[0];
 
   // 새로고침 시에도 데이터 고정시키는 방법: localStorage
   // localStorage에는 숫자,array,bool형 모두 string으로 저장되므로 JSON stringify와 JSON parse를 해줘야 한다
@@ -20,6 +25,7 @@ const ToggleButton = () => {
 
   const handleToggle = () => {
     setIsRight(!isRight);
+    console.log("relativeURL", relativeURL);
   };
 
   useEffect(() => {
@@ -44,9 +50,9 @@ const ToggleButton = () => {
       </Background>
       <Content>
         {isRight ? (
-          <div onClick={() => navigate("/manage/member")}></div>
+          <div onClick={() => navigate("/manage/member")} />
         ) : (
-          <div onClick={() => navigate("/manage/product")}></div>
+          <div onClick={() => navigate("/manage/product")} />
         )}
       </Content>
     </Container>

@@ -52,10 +52,10 @@ const Filter = ({ sortedList, setSortedList, userList }) => {
     let IdList;
     if (orderBy === "ascend") {
       IdList = userList.sort((a, b) => (a.id < b.id ? -1 : 1));
-      console.log("아이디 기준 오름차순 정렬");
+      // console.log("아이디 기준 오름차순 정렬");
     } else {
       IdList = userList.sort((b, a) => (a.id > b.id ? -1 : 1));
-      console.log("아이디 기준 내림차순 정렬");
+      // console.log("아이디 기준 내림차순 정렬");
     }
     setSortedList(IdList);
     const slicedData = sliceDataByPerPage(IdList);
@@ -67,10 +67,10 @@ const Filter = ({ sortedList, setSortedList, userList }) => {
     let nameList;
     if (orderBy === "ascend") {
       nameList = userList.sort((a, b) => a.name.localeCompare(b.name));
-      console.log("이름 기준 오름차순 정렬");
+      // console.log("이름 기준 오름차순 정렬");
     } else {
       nameList = userList.sort((a, b) => b.name.localeCompare(a.name));
-      console.log("이름 기준 내림차순 정렬");
+      // console.log("이름 기준 내림차순 정렬");
     }
     setSortedList(nameList);
     const slicedData = sliceDataByPerPage(nameList);
@@ -84,14 +84,14 @@ const Filter = ({ sortedList, setSortedList, userList }) => {
       lastLoginDateList = userList.sort((a, b) => {
         const aDate = new Date(a.lastLoginDate);
         const bDate = new Date(b.lastLoginDate);
-        console.log("로그인 시점 기준 오름차순 정렬");
+        // console.log("로그인 시점 기준 오름차순 정렬");
         return aDate - bDate;
       });
     } else {
       lastLoginDateList = userList.sort((a, b) => {
         const aDate = new Date(a.lastLoginDate);
         const bDate = new Date(b.lastLoginDate);
-        console.log("로그인 시점 기준 내림차순 정렬");
+        // console.log("로그인 시점 기준 내림차순 정렬");
         return bDate - aDate;
       });
     }
@@ -106,14 +106,14 @@ const Filter = ({ sortedList, setSortedList, userList }) => {
       birthDateList = userList.sort((a, b) => {
         const aDate = new Date(a.birthday);
         const bDate = new Date(b.birthday);
-        console.log("생일 기준 오름차순");
+        // console.log("생일 기준 오름차순");
         return aDate - bDate;
       });
     } else {
       birthDateList = userList.sort((a, b) => {
         const aDate = new Date(a.birthday);
         const bDate = new Date(b.birthday);
-        console.log("생일 기준 내림차순");
+        // console.log("생일 기준 내림차순");
         return bDate - aDate;
       });
     }
