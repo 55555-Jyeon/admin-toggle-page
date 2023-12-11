@@ -6,6 +6,7 @@ import product from "../images/package.png";
 
 const ToggleButton = () => {
   const navigate = useNavigate();
+  // 뒤로가기 클릭 시 toggle UI도 같이 변경되게 하기 위한 주소 상수로 설정
 
   // 새로고침 시에도 데이터 고정시키는 방법: localStorage
   // localStorage에는 숫자,array,bool형 모두 string으로 저장되므로 JSON stringify와 JSON parse를 해줘야 한다
@@ -31,6 +32,8 @@ const ToggleButton = () => {
       navigate("/manage/product");
     }
   }, [isRight]);
+
+  //토글이 닫혀있어도 해당 페이지가 화면에 보여지면 토글 오픈하는 useEffect
 
   return (
     <Container onClick={handleToggle}>
