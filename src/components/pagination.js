@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
@@ -7,7 +7,6 @@ const Pagination = ({ listLength }) => {
   //:id => 파라미터 => 라우터에 설정이 필요
   //?page=12 => 쿼리스트링 => url에 포함x => 라우터 관련 없음
   //useSearchParams => 쿼리스트링 추출 {page : 12 }
-  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
 
   //필요한 변수 지정
@@ -27,9 +26,6 @@ const Pagination = ({ listLength }) => {
   //총 페이지 그룹 개수 : 총 페이지 개수 / 한 그룹당 보여줄 페이지 개수 = 2
   const pagesPerGroup = 5;
   const totalPage = listLength / perPage; // 10
-  const [currentGroup, setCurrentGroup] = useState(1);
-
-  const lastGroup = Math.ceil(totalPage / pagesPerGroup);
 
   //[1,2,3,4,5] => 1그룹
   //[6,7,8,9,10] => 2그룹
@@ -61,7 +57,6 @@ const Pagination = ({ listLength }) => {
   //페이지 그룹을 바꿔주는 함수 => 현재 페이지가 바뀔 때마다 실행
   useEffect(() => {
     const newCurrentGroup = Math.ceil(currentPage / pagesPerGroup);
-    setCurrentGroup(newCurrentGroup);
     params.set("page", currentPage);
     setParams(params);
   }, [currentPage]);
@@ -75,32 +70,35 @@ const Pagination = ({ listLength }) => {
     setCurrentPage(pageNumber);
   };
 
+  const Buttons = Array(pagesPerGroup)
+    .fill()
+    .map((button, idx) => {
+      const currentGroup = Math.ceil(currentPage / 5);
+      const pageNumber = (currentGroup - 1) * pagesPerGroup + idx + 1;
+      // data가 없으면 얼리 리턴으로 버튼 생성 X
+      if (totalPage > perPage * idx) return pageNumber;
+    });
+
   return (
     <Wrapper>
       <JumpFirst onClick={handleFirst}>{"<<"}</JumpFirst>
       <Prev onClick={handlePrev}>{"<"}</Prev>
-      {/*버튼들 현재 그룹 => 해당 버튼들만 보여주기*/}
-      {Array(pagesPerGroup)
-        .fill()
-        .map((el, idx) => {
-          const pageNumber = (currentGroup - 1) * pagesPerGroup + idx + 1;
-
-          // data가 없으면 얼리 리턴으로 버튼 생성 X
-          if (listLength <= perPage * idx) return;
-
-          return (
-            <NumberButton
-              onClick={() => {
-                handleTarget(pageNumber);
-              }}
-              style={{
-                backgroundColor: pageNumber === page ? "#ccccff" : "#121212",
-              }}
-            >
-              {pageNumber}
-            </NumberButton>
-          );
-        })}
+      {/* 20, 50 filter 값 변경에 따라 달라질 페이지네이션 배열의 길이 */}
+      {Buttons.map((pageNumber) => {
+        if (!pageNumber) return;
+        return (
+          <NumberButton
+            onClick={() => {
+              handleTarget(pageNumber);
+            }}
+            style={{
+              backgroundColor: pageNumber === page ? "#ccccff" : "#121212",
+            }}
+          >
+            {pageNumber}
+          </NumberButton>
+        );
+      })}
       <Next onClick={handleNext}>{">"}</Next>
       <JumpLast onClick={handleLast}>{">>"}</JumpLast>
     </Wrapper>
