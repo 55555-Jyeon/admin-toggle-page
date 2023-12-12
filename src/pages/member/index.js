@@ -1,24 +1,27 @@
 import styled from "styled-components";
 import MemberList from "./member_list";
 import RegisterMember from "./register_member";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { TabButton } from "../../styles/common.style";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-const ManageMembers = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+const ManageMembers = ({ toggleState, setToggleState }) => {
+  // 뒤로가기: useSearchParams & useEffect
+  const [searchParam, setSearchParam] = useSearchParams();
   const navigate = useNavigate();
+  const [currentTab, setCurrentTab] = useState(0);
 
   const tabs = [
-    { name: "회원목록", content: <MemberList /> },
-    { name: "회원등록", content: <RegisterMember /> },
+    { name: "회원목록", content: <MemberList />, URL },
+    {
+      name: "회원등록",
+      content: <RegisterMember />,
+    },
   ];
 
   const selectedTab = (index) => {
     setCurrentTab(index);
-    // if (index === 1) {
-    //   navigate("/manage?register-member");
-    // }
+    navigate();
   };
 
   return (

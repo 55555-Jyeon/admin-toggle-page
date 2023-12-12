@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../layout/layout";
-import ManageMembers from "../pages/member";
-import ManageProducts from "../pages/product";
 import HomePage from "../pages/homepage/homepage";
-import RegisterMember from "../pages/member/register_member";
-import RegisterProduct from "../pages/product/register_product";
-import ProductList from "../pages/product/product_list";
+import ManageMembers from "../pages/member";
 import MemberList from "../pages/member/member_list";
+import RegisterMember from "../pages/member/register_member";
+import ManageProducts from "../pages/product";
+import ProductList from "../pages/product/product_list";
+import RegisterProduct from "../pages/product/register_product";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/manage/member",
+        path: "/manage/member/",
         element: <ManageMembers />,
         children: [
           {
@@ -36,7 +36,6 @@ const router = createBrowserRouter([
             path: "/manage/product/list",
             element: <ProductList />,
           },
-
           {
             path: "/manage/product/register",
             element: <RegisterProduct />,

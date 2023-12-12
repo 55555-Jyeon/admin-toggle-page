@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductList from "./product_list";
 import RegisterProduct from "./register_product";
 import { useNavigate } from "react-router-dom";
@@ -17,10 +17,6 @@ const ManageProducts = () => {
 
   const selectedTab = (index) => {
     setCurrentTab(index);
-    // console.log(index);
-    // if (index !== 1) {
-    //   navigate("/");
-    // }
   };
 
   return (
