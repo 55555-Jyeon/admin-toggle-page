@@ -4,31 +4,16 @@ import styled from "styled-components";
 
 const Pagination = ({ listLength }) => {
   // 뒤로가기
-  //:id => 파라미터 => 라우터에 설정이 필요
-  //?page=12 => 쿼리스트링 => url에 포함x => 라우터 관련 없음
   //useSearchParams => 쿼리스트링 추출 {page : 12 }
-  const [params, setParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  //필요한 변수 지정
-  //총 콘텐츠의 길이(listLength) = 200
-  //한 페이지에 보일 유저 목록(contentPerPage) = 20
-  //총 페이지 수: contentPerPage / listLength = 10
-  //현재 페이지(currentPage) = 1 ~ 10 중 선택된 페이지 => useState로 변경 가능하도록 설정
-
-  const perPage = Number(params.get("perPage")) || 20;
-  const page = Number(params.get("page")) || 1;
+  const perPage = Number(searchParams.get("perPage")) || 20;
+  const page = Number(searchParams.get("page")) || 1;
 
   const [currentPage, setCurrentPage] = useState(page);
 
-  //그룹
-  //현재 페이지 그룹 : currentGroup
-  //한 그룹당 보여줄 페이지 개수 : pagesPerGroup = 5
-  //총 페이지 그룹 개수 : 총 페이지 개수 / 한 그룹당 보여줄 페이지 개수 = 2
   const pagesPerGroup = 5;
-  const totalPage = listLength / perPage; // 10
-
-  //[1,2,3,4,5] => 1그룹
-  //[6,7,8,9,10] => 2그룹
+  const totalPage = listLength / perPage;
 
   //처음 페이지 이동 함수
   const handleFirst = () => {
@@ -54,11 +39,11 @@ const Pagination = ({ listLength }) => {
     }
   };
 
-  //페이지 그룹을 바꿔주는 함수 => 현재 페이지가 바뀔 때마다 실행
+  // 페이지 그룹을 바꿔주는 함수 => 현재 페이지가 바뀔 때마다 실행
   useEffect(() => {
     const newCurrentGroup = Math.ceil(currentPage / pagesPerGroup);
-    params.set("page", currentPage);
-    setParams(params);
+    searchParams.set("page", currentPage);
+    setSearchParams(searchParams);
   }, [currentPage]);
 
   useEffect(() => {
@@ -75,8 +60,7 @@ const Pagination = ({ listLength }) => {
     .map((button, idx) => {
       const currentGroup = Math.ceil(currentPage / 5);
       const pageNumber = (currentGroup - 1) * pagesPerGroup + idx + 1;
-      // data가 없으면 얼리 리턴으로 버튼 생성 X
-      if (totalPage > perPage * idx) return pageNumber;
+      return pageNumber;
     });
 
   return (
@@ -84,10 +68,11 @@ const Pagination = ({ listLength }) => {
       <JumpFirst onClick={handleFirst}>{"<<"}</JumpFirst>
       <Prev onClick={handlePrev}>{"<"}</Prev>
       {/* 20, 50 filter 값 변경에 따라 달라질 페이지네이션 배열의 길이 */}
-      {Buttons.map((pageNumber) => {
+      {Buttons.map((pageNumber, idx) => {
         if (!pageNumber) return;
         return (
           <NumberButton
+            key={idx}
             onClick={() => {
               handleTarget(pageNumber);
             }}
@@ -107,7 +92,6 @@ const Pagination = ({ listLength }) => {
 
 export default Pagination;
 
-// pagination
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;

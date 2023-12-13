@@ -23,6 +23,12 @@
 
 ##### 각 항목별 구현 페이지
 
+   <div align="center">  
+<p>전체 페이지 레이아웃입니다.</p>
+<p>입장버튼 클릭 시 member와 product를 관리하는 페이지로 접근할 수 있으며 toggle 버튼은 layout-outlet 방식으로 보여지도록 했습니다.</p>
+<img src="https://github.com/55555-Jyeon/admin-toggle-page/assets/134191817/369e9c6c-a63d-4aa8-8a01-eb25f40b088c"  />
+</div>
+
    <br/>
 1. UserList   <br/>
  1-1. 고유번호, 이름, 생년월일, 연락처, 마지막 로그인으로 이루어진 200명의 user 목록을 동적으로 생성 ✅    <br/>
@@ -39,6 +45,8 @@
  3-2. 선택된 페이지네이션이 focus 되는가✅   <br/>
  3-3. 뒤로가기 지원이 되는가 ✅   <br/>
    <br/>
+   <br/>
+
 <div align="center">
 <p>한 페이지 당 20명씩, 페이지네이션은 5개 단위로 보여지도록 했습니다.</p>
 <p>선택된 페이지는 focus 시 css를 적용해 이용자가 현재 어느 페이지에 있는지 쉽게 알 수 있도록 했고</p>
@@ -56,7 +64,8 @@
 <div align="center">
 <p>20명씩, 50명씩 선택해 표를 볼 수 있는 필터링 기능</p>
 <p>밑에 페이지네이션 배열도 보여지는 userList.length에 따라 길이가 달라집니다.</p>
-<img src=""  />
+<img src="https://github.com/55555-Jyeon/admin-toggle-page/assets/134191817/35369e22-fcf9-4587-86ec-443ff056b000"  />
+<img src="https://github.com/55555-Jyeon/admin-toggle-page/assets/134191817/0c1078f6-fa19-4ca2-85b3-6ce5e63dcf66"  />
 </div>
    <br/>
 <div align="center">
@@ -75,11 +84,7 @@
   5-1. 새로고침 시 데이터가 유지되는가 ✅   <br/>
   5-2. 뒤로가기 지원이 되는가 ❌   <br/>
   <br/>
-<div align="center">  
-<p>전체 페이지 레이아웃입니다.</p>
-<p>입장버튼 클릭 시 member와 product를 관리하는 페이지로 접근할 수 있으며 toggle 버튼은 layout-outlet 방식으로 보여지도록 했습니다.</p>
-<img src="https://github.com/55555-Jyeon/admin-toggle-page/assets/134191817/369e9c6c-a63d-4aa8-8a01-eb25f40b088c"  />
-</div>
+
 <div align="center">
 <p>새로고침 시에도 토글 버튼이 default 값으로 돌아가지 않습니다.</p>
 <p>이는 토글의 상태를 LocalStorage에 저장하는 것으로 해결했습니다.</p>
@@ -92,9 +97,6 @@
 <p>토글 버튼의 경우 뒤로가기가 되지 않습니다.</p>
 </div>
    <br/>
-##### 나는 상태를 잘 관리하고 있는가? 반복적인 UI를 최소화하기 위해 노력하고있는가?
-
-상태관리에 대해서....
 
 ##### 회고
 

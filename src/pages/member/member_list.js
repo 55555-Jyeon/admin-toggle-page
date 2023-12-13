@@ -15,11 +15,7 @@ const MemberList = () => {
 
   return (
     <Container>
-      <Filter
-        sortedList={sortedList}
-        setSortedList={setSortedList}
-        userList={userList}
-      />
+      <Filter setSortedList={setSortedList} userList={userList} />
       <UserTable userList={sortedList} />
       <Pagination listLength={listLength} />
     </Container>

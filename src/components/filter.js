@@ -3,24 +3,22 @@ import styled from "styled-components";
 import { Button } from "../styles/common.style";
 import { useSearchParams } from "react-router-dom";
 
-const Filter = ({ sortedList, setSortedList, userList }) => {
+const Filter = ({ setSortedList, userList }) => {
   // 뒤로가기: useSearchParams & useEffect
-  const [searchParam, setSearchParam] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const sortBy = searchParam.get("sort-by") || "memberId";
-  const orderBy = searchParam.get("order-by") || "ascend";
-  const currentPage = searchParam.get("page") || 1;
-  const perPage = searchParam.get("per-page") || 20;
+  const sortBy = searchParams.get("sort-by") || "memberId";
+  const orderBy = searchParams.get("order-by") || "ascend";
+  const currentPage = searchParams.get("page") || 1;
+  const perPage = searchParams.get("per-page") || 20;
 
   // 선택된 옵션으로 쿼리스트링 변경하는 함수
   const onChangeValue = (e) => {
-    searchParam.set(e.target.name, e.target.value);
-    setSearchParam(searchParam);
+    searchParams.set(e.target.name, e.target.value);
+    setSearchParams(searchParams);
   };
 
-  // 현재 페이지에 보이는 콘텐츠 리스트
-  // 한 페이지에 보일 유저의 처음과 마지막 index를 구해 list를 나누는 함수
-  // 즉, (userList/ perPage)를 실행하는 함수
+  // (userList/ perPage)를 실행하는 함수
   const sliceDataByPerPage = (list) => {
     // 매개변수로 받는 list는 필터를 거치지 않은 pure userList
     const currentFirstIndex = (currentPage - 1) * perPage; // 0
@@ -45,7 +43,7 @@ const Filter = ({ sortedList, setSortedList, userList }) => {
         sortByBirthDate();
         break;
     }
-  }, [searchParam]);
+  }, [searchParams]);
 
   // 회원번호 순(default)
   const SortById = () => {
@@ -54,7 +52,7 @@ const Filter = ({ sortedList, setSortedList, userList }) => {
       IdList = userList.sort((a, b) => (a.id < b.id ? -1 : 1));
       // console.log("아이디 기준 오름차순 정렬");
     } else {
-      IdList = userList.sort((b, a) => (a.id > b.id ? -1 : 1));
+      IdList = userList.sort((a, b) => (a.id > b.id ? -1 : 1));
       // console.log("아이디 기준 내림차순 정렬");
     }
     setSortedList(IdList);
