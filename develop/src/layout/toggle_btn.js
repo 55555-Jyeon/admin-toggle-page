@@ -5,30 +5,32 @@ import member from "../images/user.png";
 import product from "../images/package.png";
 
 const ToggleButton = () => {
-  /**
-   * TODOLIST
-   *
-   * [ 컴포넌트 구조 나누기에 대하여 생각해보기 ]
-   * - pagination props 전달 너무 많음
-   * - buttonArray 재사용 가능하게 깔끔하게 바꾸기
-   *
-   * - filter UI가 페이지네이션 버튼 클릭해야 적용이 되는 부분 고치기
-   *
-   * [ 뒤로가기 버튼 ]
-   * - pagination 뒤로가기 클릭 시 UI 변경 안 됨
-   * - toggle 뒤로가기 클릭 시 UI 변경 안 됨
-   *
-   */
-
   const navigate = useNavigate();
+  // 뒤로가기 클릭 시 toggle UI도 같이 변경되게 하기 위한 주소를 상수로 설정
+  const currentURL = window.location.href;
+  const baseURL = "http://localhost:3000";
+  //현재 url에서 baseURL과 파라미터를 제외한 주소만 가져오기
+  const relativeURL = currentURL.replace(baseURL, "").split("?")[0];
 
-  const [isRight, setIsRight] = useState(false);
+  // 새로고침 시에도 데이터 고정시키는 방법: localStorage, sessionStorage
+  // localStorage에는 숫자,array,bool형 모두 string으로 저장되므로 JSON stringify와 JSON parse를 해줘야 한다
 
-  const toggleHandler = () => {
+  // toggle state
+  const [isRight, setIsRight] = useState(
+    localStorage.getItem("toggleState")
+      ? JSON.parse(localStorage.getItem("toggleState")) //로컬 스토리지에 toggleState라는 데이터가 저장되 있을때
+      : false // 없을 때 (첫 렌더링)
+  );
+
+  const handleToggle = () => {
     setIsRight(!isRight);
+    console.log("relativeURL", relativeURL);
   };
 
   useEffect(() => {
+    //로컬스토리지에 데이터가 있다면 처음부터 isRight의 상태를 바꿔야함
+    localStorage.setItem("toggleState", JSON.stringify(isRight));
+
     if (isRight) {
       navigate("/manage/member");
     } else {
@@ -36,8 +38,10 @@ const ToggleButton = () => {
     }
   }, [isRight]);
 
+  //토글이 닫혀있어도 해당 페이지가 화면에 보여지면 토글 오픈하는 useEffect
+
   return (
-    <Container onClick={toggleHandler}>
+    <Container onClick={handleToggle}>
       <Background className={` ${isRight ? "toggle--checked" : null}`}>
         <Toggle className={` ${isRight ? "toggle--checked" : null}`}>
           {isRight ? <img src={member} /> : <img src={product} />}
@@ -45,10 +49,19 @@ const ToggleButton = () => {
       </Background>
       <Content>
         {isRight ? (
-          <div onClick={() => navigate("/manage/member")}></div>
+          <div
+            onClick={() => navigate("/manage/member")}
+            toggleState={isRight}
+            setToggleState={setIsRight}
+          />
         ) : (
-          <div onClick={() => navigate("/manage/product")}></div>
+          <div
+            onClick={() => navigate("/manage/product")}
+            toggleState={isRight}
+            setToggleState={setIsRight}
+          />
         )}
+        {/* <MenuPage toggleState={isRight} setToggleState={setIsRight} /> */}
       </Content>
     </Container>
   );

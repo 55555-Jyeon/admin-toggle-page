@@ -1,182 +1,138 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { Button } from "../styles/common.style";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-const Filter = ({
-  users,
-  setUsers,
-  setUserPerPage,
-  setButtonArray,
-  currentPage,
-  setCurrentPage,
-}) => {
-  // 뒤로가기
-  const navigate = useNavigate();
+const Filter = ({ setSortedList, userList }) => {
+  // 뒤로가기: useSearchParams & useEffect
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // const [param, setParam] = useSearchParams();
-  // const sortBy = param.get("sort");
-  // const sortAs = param.get("isAscend");
-  // console.log("param값은?", sortBy, sortAs);
+  const currentPage = searchParams.get("page") || 1;
+  const perPage = searchParams.get("per-page") || 20;
+  const sortBy = searchParams.get("sort-by") || "memberId";
+  const orderBy = searchParams.get("order-by") || "ascend";
 
-  // const [sortMethod, setSortMethod] = useState("null");
-  // const [isAscend, setIsAscend] = useState("null");
-
-  const [param, setParam] = useSearchParams();
-  const method = param.get("sortAs");
-  const standard = param.get("sortBy");
-  console.log("sortAs param?", method);
-  console.log("sortBy param?", standard);
-
-  const [sortMethod, setSortMethod] = useState("null");
-  const [sortStandard, setSortStandard] = useState("id");
-  const [sortedList, setSortedList] = useState("");
-
-  const changeUserPerPage = (e) => {
-    if (e.target.value === "20") {
-      setUserPerPage(20);
-      setButtonArray([0, 1, 2, 3, 4]);
-    }
-    if (e.target.value === "50") {
-      setUserPerPage(50);
-      setCurrentPage(1);
-      setButtonArray([0, 1, 2, 3]);
-    }
+  // 선택된 옵션으로 쿼리스트링 변경하는 함수
+  const onChangeValue = (e) => {
+    searchParams.set(e.target.name, e.target.value);
+    setSearchParams(searchParams);
   };
 
-  // 오름차순(ascend), 내림차순(descend)
-  // default : id 기준
-  const defaultAscend = (e) => {
-    if (e.target.value === "ascend") {
-      setUsers(() => [...users].sort((a, b) => (a.id < b.id ? -1 : 1)));
-      setSortMethod("오름차순");
-    } else if (e.target.value === "descend") {
-      setUsers(() => [...users].sort((b, a) => (a.id > b.id ? -1 : 1)));
-      setSortMethod("내림차순");
-    }
+  // (userList / perPage)를 실행하는 함수
+  const sliceDataByPerPage = (userList) => {
+    const currentFirstIndex = (currentPage - 1) * perPage; // 0
+    const currentLastIndex = currentPage * perPage; // 20, 50
+    const slicedData = userList.slice(currentFirstIndex, currentLastIndex);
+    return slicedData;
   };
 
+  // 렌더링 될 떄 sortBy 옵션을 파악해서 해당 필터링 함수 실행: 경우의 수가 2가지 이상이므로 switch문으로 작성
   useEffect(() => {
-    console.log(users);
-    navigate(
-      `/manage/member?page=${currentPage}&sortAs=${sortMethod}&sortBy=${sortStandard}`
-    );
-  }, [currentPage, sortMethod, sortStandard]);
-
-  console.log("sortMethod :", sortMethod);
-  console.log(" sortStandard :", sortStandard);
-
-  // select sort standard
-  const onChangeStandard = () => {
-    let filteredList;
-
-    if (sortMethod === "ascend") {
-      switch (sortStandard) {
-        case "name":
-          setSortStandard("name");
-          filteredList = setUsers(
-            [...users].sort((a, b) => (a.id > b.id ? 1 : -1))
-          );
-          setSortedList(filteredList);
-          break;
-        case "birth":
-          setSortStandard("birth");
-          filteredList = setUsers(
-            [...users].sort((a, b) => (a.birthday > b.birthday ? 1 : -1))
-          );
-          setSortedList(filteredList);
-          break;
-        case "login":
-          setSortStandard("login");
-          filteredList = setUsers(
-            [...users].sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1))
-          );
-          setSortedList(filteredList);
-          break;
-      }
-    } else if (sortMethod === "descend") {
-      switch (sortStandard) {
-        case "name":
-          setSortStandard("name");
-          filteredList = setUsers(
-            [...users].sort((b, a) => (a.id > b.id ? 1 : -1))
-          );
-          setSortedList(filteredList);
-          break;
-        case "birth":
-          setSortStandard("birth");
-          filteredList = setUsers(
-            [...users].sort((b, a) => (a.birthday > b.birthday ? 1 : -1))
-          );
-          setSortedList(filteredList);
-          break;
-        case "login":
-          setSortStandard("login");
-          filteredList = setUsers(
-            [...users].sort((b, a) => (a.createdAt > b.createdAt ? 1 : -1))
-          );
-          setSortedList(filteredList);
-          break;
-      }
+    switch (sortBy) {
+      case "memberId":
+        SortById();
+        break;
+      case "name":
+        SortByName();
+        break;
+      case "recentLogin":
+        sortByLastLoginDate();
+        break;
+      case "birth":
+        sortByBirthDate();
+        break;
     }
+  }, [searchParams]);
+
+  // 회원번호 순(default)
+  const SortById = () => {
+    let IdList;
+    if (orderBy === "ascend") {
+      IdList = userList.sort((a, b) => (a.id < b.id ? -1 : 1));
+      // console.log("아이디 기준 오름차순 정렬");
+    } else {
+      IdList = userList.sort((a, b) => (a.id > b.id ? -1 : 1));
+      // console.log("아이디 기준 내림차순 정렬");
+    }
+    setSortedList(IdList);
+    const slicedData = sliceDataByPerPage(IdList);
+    setSortedList(slicedData);
   };
 
-  // useEffect(() => {
-  //   console.log(users);
-  //   navigate(`/manage/member?page=${currentPage}&sort=${sortMethod}&isAscend=${isAscend}`);
-  // }, [sortMethod, isAscend]);
+  // 이름 순
+  const SortByName = () => {
+    let nameList;
+    if (orderBy === "ascend") {
+      nameList = userList.sort((a, b) => a.name.localeCompare(b.name));
+      // console.log("이름 기준 오름차순 정렬");
+    } else {
+      nameList = userList.sort((a, b) => b.name.localeCompare(a.name));
+      // console.log("이름 기준 내림차순 정렬");
+    }
+    setSortedList(nameList);
+    const slicedData = sliceDataByPerPage(nameList);
+    setSortedList(slicedData);
+  };
 
-  // console.log(sortMethod);
+  // 로그인 시점 순
+  const sortByLastLoginDate = () => {
+    let lastLoginDateList;
+    if (orderBy === "ascend") {
+      lastLoginDateList = userList.sort((a, b) => {
+        const aDate = new Date(a.lastLoginDate);
+        const bDate = new Date(b.lastLoginDate);
+        // console.log("로그인 시점 기준 오름차순 정렬");
+        return aDate - bDate;
+      });
+    } else {
+      lastLoginDateList = userList.sort((a, b) => {
+        const aDate = new Date(a.lastLoginDate);
+        const bDate = new Date(b.lastLoginDate);
+        // console.log("로그인 시점 기준 내림차순 정렬");
+        return bDate - aDate;
+      });
+    }
+    const slicedData = sliceDataByPerPage(lastLoginDateList);
+    setSortedList(slicedData);
+  };
 
-  // const filterByName = (e) => {
-  //   if (e.target.value === "number") {
-  //     setSortMethod("number");
-  //   } else if (e.target.value === "name") {
-  //     setSortMethod("name");
-  //   } else if (e.target.value === "birth") {
-  //     setSortMethod("birth");
-  //   } else {
-  //     setSortMethod("login");
-  //   }
-  // };
-
-  // const defaultAscend = (e) => {
-  //   if (e.target.value === "오름차순") {
-  //     setIsAscend(true);
-  //   } else {
-  //     setIsAscend(false);
-  //   }
-
-  //   if (sortBy === "number" && sortAs === "true") {
-  //     setUsers([...users].sort((a, b) => (a.id > b.id ? -1 : 1)));
-  //   } else if (sortBy === "number" && sortAs === "false") {
-  //     setUsers([...users].sort((b, a) => (a.id > b.id ? -1 : 1)));
-  //   }
-  //    else if (sortBy === "name" && sortAs === "true") {
-  //     setUsers([...users].sort((a, b) => (a.name > b.name ? -1 : 1)));
-  //   } else if (sortBy === "name" && sortAs === "false") {
-  //     setUsers([...users].sort((b, a) => (a.name > b.name ? -1 : 1)));
-  //   }
-  // };
-
-  // console.log(sortMethod);
+  //생년월일 순
+  const sortByBirthDate = () => {
+    let birthDateList;
+    if (orderBy === "ascend") {
+      birthDateList = userList.sort((a, b) => {
+        const aDate = new Date(a.birthday);
+        const bDate = new Date(b.birthday);
+        // console.log("생일 기준 오름차순");
+        return aDate - bDate;
+      });
+    } else {
+      birthDateList = userList.sort((a, b) => {
+        const aDate = new Date(a.birthday);
+        const bDate = new Date(b.birthday);
+        // console.log("생일 기준 내림차순");
+        return bDate - aDate;
+      });
+    }
+    const slicedData = sliceDataByPerPage(birthDateList);
+    setSortedList(slicedData);
+  };
 
   return (
     <ButtonBox>
-      <select onChange={changeUserPerPage}>
+      <select onChange={onChangeValue} name="per-page">
         <option value={20}>20명씩 보기</option>
         <option value={50}>50명씩 보기</option>
       </select>
       {/* sort standard */}
-      <select onChange={onChangeStandard} name="standard">
-        <option value={"number"}>회원번호</option>
+      <select onChange={onChangeValue} name="sort-by">
+        <option value={"memberId"}>회원번호</option>
         <option value={"name"}>이름</option>
         <option value={"birth"}>생일</option>
-        <option value={"login"}>최근 로그인</option>
+        <option value={"recentLogin"}>최근 로그인</option>
       </select>
       {/* sort method */}
-      <select onChange={defaultAscend} name="method">
-        <option>나열 방향</option>
+      <select onChange={onChangeValue} name="order-by">
         <option value={"ascend"}>오름차순</option>
         <option value={"descend"}>내림차순</option>
       </select>
